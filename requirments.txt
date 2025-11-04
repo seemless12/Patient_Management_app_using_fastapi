@@ -2,7 +2,6 @@
 fastapi
 uvicorn
 pydantic
-sqlite3-binary
 
 # Frontend
 streamlit
