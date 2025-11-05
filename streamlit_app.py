@@ -13,48 +13,98 @@ menu = ["Add Patient", "View All", "Sort Patients", "Update Patient", "Delete Pa
 choice = st.sidebar.selectbox("Navigation", menu)
 
 # --------------------------------------------------
-# 🔹 ADD PATIENT SECTION
+# 🔹 ADD PATIENT SECTION (Improved Inline Validation)
 # --------------------------------------------------
 if choice == "Add Patient":
     st.subheader("➕ Add New Patient")
 
-    # Input Fields
+    # Input fields
     name = st.text_input("Full Name")
-    if name and not re.match(r'^[a-zA-Z\s]+$', name):
-        st.error("Invalid name — only letters and spaces allowed.")
+    name_error = st.empty()
 
     age = st.number_input("Age", min_value=1, max_value=100, value=1)
+    age_error = st.empty()
 
     gender = st.selectbox("Gender", ["Male", "Female"])
 
     blood_type = st.text_input("Blood Type (e.g. A+, O-)")
-    if blood_type and len(blood_type) > 3:
-        st.error("Invalid blood type — max 3 characters (e.g. A+).")
+    blood_error = st.empty()
 
     contact_phone = st.text_input("Contact Phone")
-    if contact_phone and not re.match(r'^[0-9\-]{4,15}$', contact_phone):
-        st.error("Invalid phone number — only digits and '-' allowed.")
+    phone_error = st.empty()
 
     contact_email = st.text_input("Contact Email (optional)")
-    if contact_email and not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', contact_email):
-        st.error("Invalid email address format.")
+    email_error = st.empty()
 
     doctor_assigned = st.text_input("Doctor Assigned")
-    medical_history = st.text_area("Medical History (comma separated)", placeholder="e.g. Diabetes, Hypertension")
+    doctor_error = st.empty()
 
-    # Submit Button
+    medical_history = st.text_area(
+        "Medical History (comma separated)",
+        placeholder="e.g. Diabetes, Hypertension"
+    )
+
+    # Create button
     if st.button("Create Patient"):
-        # Validate before sending
-        if not name or not re.match(r'^[a-zA-Z\s]+$', name):
-            st.warning("⚠️ Please enter a valid name.")
-        elif blood_type and len(blood_type) > 3:
-            st.warning("⚠️ Blood type must be at most 3 characters.")
-        elif not re.match(r'^[0-9\-]{4,15}$', contact_phone):
-            st.warning("⚠️ Please enter a valid contact number.")
-        elif contact_email and not re.match(r'^[\w\.-]+@[\w\.-]+\.\w+$', contact_email):
-            st.warning("⚠️ Please enter a valid email address.")
+        valid = True
+
+        # ✅ Validate Name
+        if not name.strip():
+            name_error.markdown('<p style="color:red;">⚠️ Name cannot be empty.</p>', unsafe_allow_html=True)
+            valid = False
+        elif not re.match(r'^[a-zA-Z\s]+$', name):
+            name_error.markdown('<p style="color:red;">⚠️ Invalid name — letters only.</p>', unsafe_allow_html=True)
+            valid = False
         else:
-            # Prepare data
+            name_error.empty()
+
+        # ✅ Validate Age
+        if not (1 <= age <= 100):
+            age_error.markdown('<p style="color:red;">⚠️ Age must be between 1 and 100.</p>', unsafe_allow_html=True)
+            valid = False
+        else:
+            age_error.empty()
+
+        # ✅ Validate Blood Type
+        if not blood_type.strip():
+            blood_error.markdown('<p style="color:red;">⚠️ Blood type is required.</p>', unsafe_allow_html=True)
+            valid = False
+        elif len(blood_type) > 3:
+            blood_error.markdown('<p style="color:red;">⚠️ Blood type too long (max 3 chars).</p>', unsafe_allow_html=True)
+            valid = False
+        else:
+            blood_error.empty()
+
+        # ✅ Validate Phone
+        if not contact_phone.strip():
+            phone_error.markdown('<p style="color:red;">⚠️ Contact phone is required.</p>', unsafe_allow_html=True)
+            valid = False
+        elif not re.match(r'^[0-9\-]{4,15}$', contact_phone):
+            phone_error.markdown('<p style="color:red;">⚠️ Invalid phone number format (4–15 digits).</p>', unsafe_allow_html=True)
+            valid = False
+        else:
+            phone_error.empty()
+
+        # ✅ Validate Email (only if filled)
+        if contact_email:
+            email_pattern = r'^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$'
+            if not re.match(email_pattern, contact_email):
+                email_error.markdown('<p style="color:red;">⚠️ Invalid email address.</p>', unsafe_allow_html=True)
+                valid = False
+            else:
+                email_error.empty()
+        else:
+            email_error.empty()
+
+        # ✅ Validate Doctor Assigned
+        if not doctor_assigned.strip():
+            doctor_error.markdown('<p style="color:red;">⚠️ Doctor name cannot be empty.</p>', unsafe_allow_html=True)
+            valid = False
+        else:
+            doctor_error.empty()
+
+        # ✅ Submit to backend only if all are valid
+        if valid:
             data = {
                 "name": name,
                 "age": age,
@@ -63,7 +113,7 @@ if choice == "Add Patient":
                 "contact_phone": contact_phone,
                 "contact_email": contact_email or None,
                 "Medical_History": [x.strip() for x in medical_history.split(",")] if medical_history else None,
-                "doctor_assigned": doctor_assigned,
+                "doctor_assigned": doctor_assigned
             }
 
             res = requests.post(f"{BASE_URL}/create_patients", json=data)
@@ -74,6 +124,7 @@ if choice == "Add Patient":
                     st.error(f"❌ {res.json().get('detail', 'Server error')}")
                 except:
                     st.error("❌ Something went wrong while creating patient.")
+
 
 # --------------------------------------------------
 # 🔹 VIEW ALL PATIENTS
@@ -166,3 +217,4 @@ elif choice == "Delete Patient":
             st.success("✅ Patient deleted successfully!")
         else:
             st.error(f"❌ {res.json().get('detail', 'Something went wrong')}")
+
