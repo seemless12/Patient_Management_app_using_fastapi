@@ -20,8 +20,16 @@ if choice == "Add Patient":
     blood_type = st.text_input("Blood Type (e.g. A+, O-)")
     contact_phone = st.text_input("Contact Phone")
     contact_email = st.text_input("Contact Email (optional)")
-    doctor_assigned = st.text_input("Doctor Assigned")
-    medical_history = st.text_area("Medical History (comma separated)", placeholder="e.g. Diabetes, Hypertension")
+    
+    # Doctor Assigned (auto "Dr " prefix)
+    doctor_assigned = st.text_input("Doctor Assigned", value="Dr ")
+    if not doctor_assigned.startswith("Dr "):
+        doctor_assigned = "Dr " + doctor_assigned.strip()
+    
+    medical_history = st.text_area(
+        "Medical History (comma separated)",
+        placeholder="e.g. Diabetes, Hypertension"
+    )
 
     if st.button("Create Patient"):
         data = {
@@ -127,4 +135,5 @@ elif choice == "Delete Patient":
             st.success("✅ Patient deleted successfully!")
         else:
             st.error(f"❌ Error: {res.json().get('detail')}")
+
 
