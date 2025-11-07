@@ -212,29 +212,12 @@ elif choice == "Delete Patient":
     patient_id_input = st.text_input("Enter Patient ID to Delete")
 
     if st.button("Delete"):
-        # --- Validate ID ---
-        if not patient_id_input.strip():
-            st.warning("⚠️ Please enter a Patient ID.")
-        elif not patient_id_input.strip().isdigit():
-            st.error("❌ Patient ID must be a number.")
+    if patient_id:
+        res = requests.delete(f"{BASE_URL}/delete_patients/{patient_id}")  # 👈 make sure plural matches
+        if res.status_code == 200:
+            st.success("Patient deleted successfully!")
         else:
-            patient_id = int(patient_id_input.strip())  # convert to int
-
-            try:
-                res = requests.delete(f"{BASE_URL}/delete_patients/{patient_id}")
-
-                if res.status_code == 200:
-                    st.success("✅ Patient deleted successfully!")
-                elif res.status_code == 404:
-                    st.error("❌ Patient not found.")
-                else:
-                    # Try reading backend error safely
-                    try:
-                        st.error(f"❌ {res.json().get('detail', 'Something went wrong.')}")
-                    except:
-                        st.error("❌ Unexpected response from server.")
-            except Exception as e:
-                st.error(f"⚠️ Request failed: {e}")
+            st.error(f"Error: {res.text}")
 
 
 
