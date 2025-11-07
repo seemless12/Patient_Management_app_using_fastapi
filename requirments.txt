@@ -1,11 +1,7 @@
-# Backend
 fastapi
 uvicorn
 pydantic
-
-# Frontend
 streamlit
 requests
-
-# Optional (for advanced validation)
 email-validator
+
