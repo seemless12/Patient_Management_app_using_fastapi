@@ -32,4 +32,12 @@ This **FastAPI CRUD Web App** includes **form validation, inline error messages,
 
 ---
 
+---
+
+## 🔍 SEO Keywords (Improve Search Ranking)
+
+FastAPI CRUD Project, FastAPI SQLite Example, Hospital Management System Python, 
+Patient Record Management, Python FastAPI Web App, FastAPI Form Validation Example, 
+FastAPI Full Stack Project, FastAPI with HTML and Jinja2, SQLite Database FastAPI, 
+FastAPI Portfolio Project
 
