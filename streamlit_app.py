@@ -209,15 +209,23 @@ elif choice == "Update Patient":
 # --------------------------------------------------
 elif choice == "Delete Patient":
     st.subheader("🗑️ Delete Patient")
-    patient_id = st.text_input("Enter Patient ID to Delete")
+    patient_id_input = st.text_input("Enter Patient ID to Delete")
 
     if st.button("Delete"):
-    if patient_id:
-        res = requests.delete(f"{BASE_URL}/delete_patients/{patient_id}")  # 👈 make sure plural matches
-        if res.status_code == 200:
-            st.success("Patient deleted successfully!")
+        if not patient_id_input.strip():
+            st.error("⚠️ Please enter a patient ID.")
         else:
-            st.error(f"Error: {res.text}")
+            res = requests.delete(f"{BASE_URL}/delete_patients/{patient_id_input}")
+            st.write("Request URL:", f"{BASE_URL}/delete_patients/{patient_id_input}")  # Debug info
+
+            if res.status_code == 200:
+                st.success("✅ Patient deleted successfully!")
+            else:
+                try:
+                    st.error(f"❌ {res.json().get('detail', 'Not Found')}")
+                except:
+                    st.error(f"❌ Server error: {res.text}")
+
 
 
 
