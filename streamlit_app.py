@@ -209,7 +209,7 @@ elif choice == "Update Patient":
 # --------------------------------------------------
 elif choice == "Delete Patient":
     st.subheader("🗑️ Delete Patient")
-    patient_id_input = st.text_input("Enter Patient ID to Delete")
+    patient_id = st.text_input("Enter Patient ID to Delete")
 
     if st.button("Delete"):
     if patient_id:
@@ -218,6 +218,7 @@ elif choice == "Delete Patient":
             st.success("Patient deleted successfully!")
         else:
             st.error(f"Error: {res.text}")
+
 
 
 
