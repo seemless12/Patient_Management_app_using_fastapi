@@ -5,7 +5,7 @@ BASE_URL = "https://seenless-patient-fastapi-server.hf.space"  # your FastAPI ba
 
 st.set_page_config(page_title="Patient Management System", layout="centered")
 
-st.title("🏥 Patient Management Dashboard")
+st.title(" Patient Management Dashboard")
 
 # --- Sidebar Navigation ---
 menu = ["Add Patient", "View All", "Sort Patients", "Update Patient", "Delete Patient"]
@@ -133,7 +133,7 @@ if choice == "Add Patient":
 
 # --- View All Patients ---
 elif choice == "View All":
-    st.subheader("📋 All Patients")
+    st.subheader(" All Patients")
     res = requests.get(f"{BASE_URL}/patients")
     if res.status_code == 200:
         patients = res.json()
@@ -143,7 +143,7 @@ elif choice == "View All":
 
 # --- Sort Patients ---
 elif choice == "Sort Patients":
-    st.subheader("🔀 Sort Patients")
+    st.subheader(" Sort Patients")
 
     sort_by = st.selectbox("Sort by", ["age", "gender", "blood_type"])
     order = st.radio("Order", ["asc", "desc"])
@@ -158,7 +158,7 @@ elif choice == "Sort Patients":
 
 # --- Update Patient ---
 elif choice == "Update Patient":
-    st.subheader("✏️ Update Patient Info")
+    st.subheader(" Update Patient Info")
     patient_id = st.text_input("Enter Patient ID")
 
     st.markdown("### Update the fields you want to change")
@@ -205,32 +205,33 @@ elif choice == "Update Patient":
 
         # Ensure at least one field is updated
         if not update_data:
-            st.warning("⚠️ Please provide at least one field to update.")
+            st.warning(" Please provide at least one field to update.")
         else:
             try:
                 res = requests.put(f"{BASE_URL}/update_patients/{patient_id}", json=update_data)
                 if res.status_code == 200:
-                    st.success("✅ Patient updated successfully!")
+                    st.success("Patient updated successfully!")
                 else:
                     try:
                         error_msg = res.json().get("detail", "Unknown error")
                     except:
                         error_msg = "Server returned invalid response"
 
-                    st.error(f"❌ Error: {error_msg}")
+                    st.error(f" Error: {error_msg}")
             except Exception as e:
-                st.error(f"⚠️ Request failed: {e}")
+                st.error(f" Request failed: {e}")
 
 
 
 # --- Delete Patient ---
 elif choice == "Delete Patient":
-    st.subheader("🗑️ Delete Patient")
+    st.subheader(" Delete Patient")
     patient_id = st.number_input("Enter Patient ID to Delete", min_value=1, step=1) 
     if st.button("Delete"):
         res = requests.delete(f"{BASE_URL}/delete_patients/{patient_id}")
         if res.status_code == 200:
-            st.success("✅ Patient deleted successfully!")
+            st.success(" Patient deleted successfully!")
         else:
-            st.error(f"❌ Error: {res.json().get('detail')}")
+            st.error(f" Error: {res.json().get('detail')}")
+
 
