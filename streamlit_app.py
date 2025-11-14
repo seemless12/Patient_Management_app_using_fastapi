@@ -1,7 +1,7 @@
 import streamlit as st
 import requests
 import re
-BASE_URL = "http://127.0.0.1:8000"  # your FastAPI backend URL
+BASE_URL = "https://seenless-patient-fastapi-server.hf.space"  # your FastAPI backend URL
 
 st.set_page_config(page_title="Patient Management System", layout="centered")
 
@@ -233,3 +233,4 @@ elif choice == "Delete Patient":
             st.success("✅ Patient deleted successfully!")
         else:
             st.error(f"❌ Error: {res.json().get('detail')}")
+
